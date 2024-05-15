@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import ra.model.base.AuditableEntity;
 import ra.model.entity.Enums.EActiveStatus;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +18,7 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class User {
+public class User extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,14 +27,13 @@ public class User {
     private String email;
     @Column(name = "FullName", nullable = false)
     private String fullName;
-
+    @Enumerated(EnumType.STRING)
     private EActiveStatus status;
 
     @Column(name = "Avatar")
     private String avatar;
 
-    //    @Pattern(regexp = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
-//    @Pattern(regexp = "(84|0[3|5|7|8|9])+([0-9]{8})\\b", message = "Số điện thoại không đúng định dạng")
+    @Pattern(regexp = "(84|0[3|5|7|8|9])+([0-9]{8})\\b", message = "Số điện thoại không đúng định dạng")
     private String phone;
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -50,7 +51,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
 
     )
-    private List<Role> roles;
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore

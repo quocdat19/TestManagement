@@ -12,10 +12,8 @@ spring:
       sql-dialect: org.hibernate.dialect.MySQLDialect
 server:
     port: 8080
-    servlet:
-      context-path: /identity
 
 jwt.secret-key: RikkeiAcademy
-jwt.expired: 864000000
+jwt.expired: 9000000000
 
 

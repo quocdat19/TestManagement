@@ -10,6 +10,7 @@ import ra.model.entity.Enums.EOptionStatus;
 @Setter
 @Builder
 @Entity
+@Table(name = "options")
 public class Option {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

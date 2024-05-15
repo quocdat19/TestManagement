@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ra.model.base.AuditableEntity;
 import ra.model.dto.request.SubjectRequest;
 import ra.model.entity.Enums.EActiveStatus;
 import ra.model.entity.Subject;
@@ -32,12 +33,40 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public Subject save(SubjectRequest subjectRequest) {
+        return subjectRepository.save ( entityAMap ( subjectRequest ) );
+    }
+    @Override
+    public Subject entityAMap(SubjectRequest subjectRequest) {
+        return Subject.builder()
+                .subjectName(subjectRequest.getSubjectName())
+                .status(EActiveStatus.valueOf(subjectRequest.getStatus()))
+                .build();
+    }
+    @Override
+    public Subject patchUpdate(Long subjectId, SubjectRequest subjectRequest) {
+        Optional<Subject> updateSubject = getSubjectById ( subjectId );
+        if (updateSubject.isPresent ()) {
+            Subject subject = updateSubject.get ();
+            AuditableEntity auditableEntity = updateSubject.get ();
+            if (auditableEntity.getCreatedDate () != null)
+                auditableEntity.setCreatedDate ( auditableEntity.getCreatedDate () );
+            if (subjectRequest.getSubjectName () != null)
+                subject.setSubjectName ( subjectRequest.getSubjectName () );
+            if (subjectRequest.getStatus () != null)
+                subject.setStatus ( EActiveStatus.valueOf ( subjectRequest.getStatus () ) );
+            return save ( subject );
+        }
+        return null;
+    }
+
+    @Override
     public void subjectDelete(Long subjectId) {
         subjectRepository.deleteById ( subjectId );
     }
 
     @Override
-    public Page<Subject> findBySubjectName(String subjectName, Pageable pageable) {
-        return subjectRepository.findBySubjectName ( subjectName, pageable );
+    public Page<Subject> findBySubjectNameContainingIgnoreCase(String subjectName, Pageable pageable) {
+        return subjectRepository.findBySubjectNameContainingIgnoreCase ( subjectName, pageable );
     }
 }

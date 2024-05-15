@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ra.exception.CustomException;
 import ra.model.dto.request.ExamRequest;
 import ra.model.entity.Enums.EActiveStatus;
 import ra.model.entity.Exam;
+import ra.model.entity.Subject;
 import ra.repository.ExamRepository;
 
 import java.util.Optional;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ExamServiceImpl implements ExamService {
     private final ExamRepository examRepository;
+    private final SubjectService subjectService;
 
     @Override
     public Page<Exam> getAll(Pageable pageable) {
@@ -32,6 +35,30 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
+    public Exam patchUpdateExam(Long examId, ExamRequest examRequest) throws CustomException {
+        Optional<Exam> updateExam = examRepository.findById ( examId );
+        if (updateExam.isPresent ()) {
+            Exam exam = updateExam.get ();
+            if (examRequest.getExamName () != null) exam.setExamName ( examRequest.getExamName () );
+            if (examRequest.getStatus () != null) {
+                EActiveStatus activeStatus = switch (examRequest.getStatus ().toUpperCase ()) {
+                    case "INACTIVE" -> EActiveStatus.INACTIVE;
+                    case "ACTIVE" -> EActiveStatus.ACTIVE;
+                    default -> null;
+                };
+                exam.setStatus ( activeStatus );
+            }
+            if (examRequest.getSubjectId () != null) {
+                Optional<Subject> subject = subjectService.getSubjectById ( examRequest.getSubjectId () );
+                if (subject.isEmpty ()) throw new CustomException ( "Subject is not exists." );
+                exam.setSubject ( subject.get () );
+            }
+            return examRepository.save ( exam );
+        }
+        throw new CustomException ( "Exam is not exists to update." );
+    }
+
+    @Override
     public void examDelete(Long examId) {
         examRepository.deleteById ( examId );
     }
@@ -39,5 +66,35 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public Page<Exam> findByExamName(String examName, Pageable pageable) {
         return examRepository.findByExamName ( examName, pageable );
+    }
+
+    @Override
+    public void hardDeleteById(Long examId) {
+        examRepository.deleteById ( examId );
+    }
+
+    @Override
+    public void softDeleteById(Long examId) throws CustomException {
+        Optional<Exam> deleteExam = getExamById ( examId );
+        if (deleteExam.isEmpty ())
+            throw new CustomException ( "Exam is not exists to delete." );
+        Exam exam = deleteExam.get ();
+        exam.setStatus ( EActiveStatus.INACTIVE );
+        examRepository.save ( exam );
+    }
+
+    @Override
+    public Page<Exam> getAllExamsToListWithActiveStatus(Pageable pageable) {
+        return examRepository.getAllByStatus ( EActiveStatus.ACTIVE, pageable );
+    }
+
+    @Override
+    public Optional<Exam> getExamByIdWithActiveStatus(Long examId) {
+        return examRepository.findByIdAndStatus ( examId, EActiveStatus.ACTIVE );
+    }
+
+    @Override
+    public Page<Exam> getAllBySubjectId(Long subjectId, Pageable pageable) {
+        return examRepository.getAllBySubjectId ( subjectId, pageable );
     }
 }

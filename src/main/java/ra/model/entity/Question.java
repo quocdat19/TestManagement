@@ -3,6 +3,7 @@ package ra.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import ra.model.base.AuditableEntity;
 import ra.model.entity.Enums.EActiveStatus;
 import ra.model.entity.Enums.EQuestionLevel;
 import ra.model.entity.Enums.EQuestionType;
@@ -14,7 +15,7 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Question {
+public class Question extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,7 +35,7 @@ public class Question {
     private Test test;
     @OneToMany(mappedBy = "question")
     @JsonIgnore
-    private List<Option> options;
+    List<Option> options;
 }
 
 

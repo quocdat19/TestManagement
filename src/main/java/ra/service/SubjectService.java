@@ -14,7 +14,13 @@ public interface SubjectService {
 
     Subject save(Subject subject);
 
+    Subject save(SubjectRequest subjectRequest);
+
+    Subject entityAMap(SubjectRequest subjectRequest);
+
+    Subject patchUpdate(Long subjectId, SubjectRequest subjectRequest);
+
     void subjectDelete(Long subjectId);
 
-    Page<Subject> findBySubjectName(String subjectName, Pageable pageable);
+    Page<Subject> findBySubjectNameContainingIgnoreCase(String subjectName, Pageable pageable);
 }

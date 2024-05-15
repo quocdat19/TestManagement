@@ -3,6 +3,7 @@ package ra.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import ra.model.base.AuditableEntity;
 import ra.model.entity.Enums.EActiveStatus;
 import ra.model.entity.Enums.ETestType;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Test {
+public class Test extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
