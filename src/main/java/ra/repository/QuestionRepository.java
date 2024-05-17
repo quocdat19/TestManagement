@@ -16,5 +16,4 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
     List<Question> getAllByCreatedDate(LocalDate date);
     Page<Question> findAllByQuestionContentIsContainingIgnoreCase(String questionContent, Pageable pageable);
     List<Question> getAllByQuestionLevel(EQuestionLevel questionLevel);
-    List<Question> getQuestionsByTestId(Long testId);
 }

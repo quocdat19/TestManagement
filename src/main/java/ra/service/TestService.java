@@ -23,6 +23,7 @@ public interface TestService {
     Test save(TestRequest testRequest);
 
     void hardDeleteByTestId(Long testId) throws CustomException;
+
     void softDeleteByTestId(Long testId) throws CustomException;
 
     Test patchUpdateATest(Long testId, TestRequest testRequest) throws CustomException;
@@ -34,4 +35,5 @@ public interface TestService {
     Page<Test> getAllByTestType(ETestType testType, Pageable pageable);
 
     Test entityAMap(TestRequest testRequest);
+
 }

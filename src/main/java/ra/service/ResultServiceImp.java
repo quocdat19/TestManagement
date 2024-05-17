@@ -80,22 +80,6 @@ public class ResultServiceImp implements ResultService {
         return resultRepository.save ( result );
     }
 
-    @Override
-    public void hardDeleteById(Long id) {
-        resultRepository.deleteById ( id );
-    }
-
-    @Override
-    public void softDeleteById(Long id) throws CustomException {
-        // ? Exception cần tìm thấy thì mới có thể xoá mềm.
-        Optional<Result> deleteResult = getById ( id );
-        if (deleteResult.isEmpty ())
-            throw new CustomException ( "Result is not exists to delete." );
-        Result result = deleteResult.get ();
-        result.setStatus ( EActiveStatus.INACTIVE );
-        resultRepository.save ( result );
-    }
-
     public boolean compareLists(List<Long> list1, List<Long> list2) {
         // Nếu độ dài của hai danh sách khác nhau, chúng không giống nhau
         if (list1.size () != list2.size ()) {

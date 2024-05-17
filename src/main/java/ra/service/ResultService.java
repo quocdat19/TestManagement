@@ -17,6 +17,4 @@ public interface ResultService {
     List<Result> findAllByUserAndTest(User user, Test test);
     Optional<Result> getById(Long id);
     Result save(Result result);
-    void hardDeleteById(Long id);
-    void softDeleteById(Long id) throws CustomException;
 }

@@ -110,7 +110,7 @@ public class AQuestionOptionController {
     }
 
     //* Hien thi danh sach question va option theo level question
-    @PostMapping("/levelQuestion")
+    @GetMapping("/levelQuestion")
     public ResponseEntity<?> getAllQuestionAndOptionByLevelQuestion(
             @RequestParam(defaultValue = "5", name = "limit") int limit,
             @RequestParam(defaultValue = "0", name = "page") int page,

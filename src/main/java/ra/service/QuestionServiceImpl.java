@@ -17,6 +17,7 @@ import ra.model.entity.Test;
 import ra.repository.QuestionRepository;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -129,7 +130,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<QuestionResponse> getAllByTestRandom(Test test) {
-        return null;
+        List<Question> questions = questionRepository.getAllByTest ( test );
+        Collections.shuffle ( questions );
+        return questions.stream ().map ( this::entityAMap ).toList ();
     }
 
     @Override
