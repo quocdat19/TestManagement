@@ -1,6 +1,5 @@
-package ra.controller.admin;
+package ra.controller.user;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -8,21 +7,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ra.exception.CustomException;
-import ra.model.dto.request.SubjectRequest;
-import ra.model.dto.response.ResponseAPI;
 import ra.model.dto.wrapper.ResponseWrapper;
 import ra.model.entity.Enums.EHttpStatus;
 import ra.model.entity.Subject;
 import ra.service.SubjectService;
 
-import java.util.Optional;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/admin/subjects")
-public class ASubjectController {
+@RequestMapping("/v1/student/subject")
+public class SSubjectController {
     private final SubjectService subjectService;
 
     @GetMapping
@@ -47,69 +45,6 @@ public class ASubjectController {
                     ), HttpStatus.OK );
         } catch (Exception exception) {
             throw new CustomException ( "An error occurred while processing the query!" );
-        }
-    }
-
-    @GetMapping("/{subjectId}")
-    public ResponseEntity<?> getSubjectById(@PathVariable("subjectId") String subjectId) throws CustomException {
-        try {
-            Long id = Long.parseLong ( subjectId );
-            Optional<Subject> subject = subjectService.getSubjectById ( id );
-            if (subject.isEmpty ())
-                throw new CustomException ( "Subject is not exists." );
-            return new ResponseEntity<> (
-                    new ResponseWrapper<> (
-                            EHttpStatus.SUCCESS,
-                            HttpStatus.OK.value (),
-                            HttpStatus.OK.name (),
-                            subject.get ()
-                    ), HttpStatus.OK );
-        } catch (NumberFormatException e) {
-            throw new CustomException ( "Incorrect id number format" );
-        }
-    }
-
-    @PostMapping("")
-    ResponseEntity<?> createSubject(@RequestBody SubjectRequest subjectRequest) {
-        Subject subject = subjectService.save ( subjectRequest );
-        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Create subject successfully" ) );
-    }
-
-    @PatchMapping("/{subjectId}")
-    public ResponseEntity<?> pathUpdateSubject(
-            @PathVariable("subjectId") String updateSubjectId,
-            @RequestBody @Valid SubjectRequest subjectRequest
-    ) throws CustomException {
-        try {
-            Long id = Long.parseLong ( updateSubjectId );
-            Subject subject = subjectService.patchUpdate ( id, subjectRequest );
-            return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Update subject successfully" ) );
-        } catch (NumberFormatException e) {
-            throw new CustomException ( "Incorrect id number format" );
-        }
-    }
-
-    @DeleteMapping("/delete/{subjectId}")
-    ResponseEntity<?> deleteSubject(@PathVariable("subjectId") String deleteSubjectId) throws CustomException {
-        Long subjectId = Long.parseLong ( deleteSubjectId );
-        subjectService.subjectDelete ( subjectId );
-        return ResponseEntity.status ( 200 ).body ( new ResponseAPI ( true, "Delete successfully" ) );
-    }
-
-    @DeleteMapping("/{subjectId}")
-    public ResponseEntity<?> softDeleteSubjectById(@PathVariable("subjectId") String subjectId) throws CustomException {
-        try {
-            Long id = Long.parseLong ( subjectId );
-            subjectService.softDeleteById ( id );
-            return new ResponseEntity<> (
-                    new ResponseWrapper<> (
-                            EHttpStatus.SUCCESS,
-                            HttpStatus.OK.value (),
-                            HttpStatus.OK.name (),
-                            "Delete Subject successfully."
-                    ), HttpStatus.OK );
-        } catch (NumberFormatException e) {
-            throw new CustomException ( "Incorrect id number format" );
         }
     }
 

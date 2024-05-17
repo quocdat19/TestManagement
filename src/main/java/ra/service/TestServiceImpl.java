@@ -41,6 +41,11 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
+    public Test save(TestRequest testRequest) {
+        return testRepository.save ( entityAMap ( testRequest ) );
+    }
+
+    @Override
     public Test patchUpdateATest(Long testId, TestRequest testRequest) throws CustomException {
         Optional<Test> updateTest = getTestById ( testId );
         if (updateTest.isPresent ()) {
@@ -80,6 +85,16 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
+    public void softDeleteByTestId(Long testId) throws CustomException {
+        Optional<Test> deleteTest = getTestById ( testId );
+        // ? Exception cần tìm thấy thì mới có thể xoá mềm.
+        if (deleteTest.isEmpty ()) throw new CustomException ( ("Test is not exists to delete.") );
+        Test test = deleteTest.get ();
+        test.setStatus ( EActiveStatus.INACTIVE );
+        testRepository.save ( test );
+    }
+
+    @Override
     public Page<Test> findAllTestsByTestNameToList(String testName, Pageable pageable) {
         return testRepository.findByTestNameContainingIgnoreCase ( testName, pageable );
     }
@@ -96,12 +111,28 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Page<Test> getAllByCreatedDate(LocalDate createdDate, Pageable pageable) {
-        return testRepository.getAllByCreatedDate ( createdDate, pageable );
-    }
-
-    @Override
-    public Page<Test> getAllFromDateToDate(LocalDate dateStart, LocalDate dateEnd, Pageable pageable) {
-        return testRepository.getAllFromDateToDate ( dateStart, dateEnd, pageable );
+    public Test entityAMap(TestRequest testRequest) {
+        ETestType testType = null;
+        if (testRequest.getTestType () != null)
+            testType = switch (testRequest.getTestType ().toUpperCase ()) {
+                case "EASY" -> ETestType.EASY;
+                case "NORMAL" -> ETestType.NORMAL;
+                case "DIFFICULTY" -> ETestType.DIFFICULTY;
+                default -> null;
+            };
+        EActiveStatus status = null;
+        if (testRequest.getStatus () != null)
+            status = switch (testRequest.getStatus ().toUpperCase ()) {
+                case "ACTIVE" -> EActiveStatus.ACTIVE;
+                case "INACTIVE" -> EActiveStatus.INACTIVE;
+                default -> null;
+            };
+        return Test.builder ()
+                .testName ( testRequest.getTestName () )
+                .testTime ( testRequest.getTestTime () )
+                .testType ( testType )
+                .status ( status )
+                .exam ( examService.getExamById ( testRequest.getExamId () ).orElse ( null ) )
+                .build ();
     }
 }

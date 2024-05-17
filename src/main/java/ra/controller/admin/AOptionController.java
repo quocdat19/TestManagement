@@ -89,7 +89,8 @@ public class AOptionController {
 
     @PostMapping("")
     ResponseEntity<?> createOption(@RequestBody OptionRequest optionRequest) {
-        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Thêm mới thành công" ) );
+        Option option = optionService.save(optionRequest);
+        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Create successfully" ) );
     }
 
     @PatchMapping("/{optionId}")
@@ -97,7 +98,7 @@ public class AOptionController {
             @PathVariable("optionId") Long optionId,
             @RequestBody @Valid OptionRequest optionRequest) {
         Option updatedOption = optionService.patchUpdateOption ( optionId, optionRequest );
-        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Sửa thành công" ) );
+        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Update successfully" ) );
     }
 
     @DeleteMapping("/delete/{optionId}")

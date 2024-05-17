@@ -97,6 +97,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public List<Question> getAllQuestionByTest(Test test) {
+        return questionRepository.getAllByTest ( test );
+    }
+
+    @Override
     public Question saveQuestionAndOption(QuestionOptionRequest questionOptionRequest) {
         Question question = save ( questionOptionRequest.getQuestionRequest () );
         List<OptionRequest> optionRequests = questionOptionRequest.getOptionRequests ();
@@ -123,33 +128,35 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> getAllByTestRandom(Test test) {
+    public List<QuestionResponse> getAllByTestRandom(Test test) {
         return null;
     }
 
     @Override
     public QuestionResponse entityAMap(Question question) {
-        return QuestionResponse.builder()
-                .questionId(question.getId())
-                .questionContent(question.getQuestionContent())
-                .questionLevel(question.getQuestionLevel())
-                .questionType(question.getQuestionType())
-                .image(question.getImage())
-                .status(question.getStatus())
-                .createdDate(question.getCreatedDate())
-                .testName(question.getTest().getTestName())
-                .options(question.getOptions().stream().map(optionService::entityAMap).toList())
-                .build();
+        return QuestionResponse.builder ()
+                .questionId ( question.getId () )
+                .questionContent ( question.getQuestionContent () )
+                .questionLevel ( question.getQuestionLevel () )
+                .questionType ( question.getQuestionType () )
+                .image ( question.getImage () )
+                .status ( question.getStatus () )
+                .createdDate ( question.getCreatedDate () )
+                .testName ( question.getTest ().getTestName () )
+                .options ( question.getOptions ().stream ().map ( optionService::entityAMap ).toList () )
+                .build ();
     }
 
     @Override
     public Question entityAMap(QuestionRequest questionRequest) {
-        EQuestionLevel questionLevel = switch (questionRequest.getQuestionLevel ()) {
-            case "EASY" -> EQuestionLevel.EASY;
-            case "NORMAL" -> EQuestionLevel.NORMAL;
-            case "DIFFICULTY" -> EQuestionLevel.DIFFICULTY;
-            default -> null;
-        };
+        EQuestionLevel questionLevel = null;
+        if (questionRequest.getQuestionLevel () != null)
+            questionLevel = switch (questionRequest.getQuestionLevel ()) {
+                case "EASY" -> EQuestionLevel.EASY;
+                case "NORMAL" -> EQuestionLevel.NORMAL;
+                case "DIFFICULTY" -> EQuestionLevel.DIFFICULTY;
+                default -> null;
+            };
         EQuestionType questionType = switch (questionRequest.getQuestionType ()) {
             case "SINGLE" -> EQuestionType.SINGLE;
             case "MULTIPLE" -> EQuestionType.MULTIPLE;

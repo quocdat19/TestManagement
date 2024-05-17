@@ -111,11 +111,11 @@ public class OptionServiceImpl implements OptionService {
 
     @Override
     public OptionResponse entityAMap(Option option) {
-        return OptionResponse.builder()
-                .optionId(option.getId())
-                .optionContent(option.getOptionContent())
-                .isCorrect(option.getIsCorrect())
-                .status(option.getStatus())
-                .build();
+        return OptionResponse.builder ()
+                .optionId ( option.getId () )
+                .optionContent ( option.getOptionContent () )
+                .isCorrect ( option.getIsCorrect () )
+                .status ( option.getStatus () )
+                .build ();
     }
 }

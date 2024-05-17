@@ -30,7 +30,7 @@ public class AQuestionController {
     public ResponseEntity<?> getAllQuestionsToPages(
             @RequestParam(defaultValue = "5", name = "limit") int limit,
             @RequestParam(defaultValue = "0", name = "page") int page,
-            @RequestParam(defaultValue = "contentQuestion", name = "sort") String sort,
+            @RequestParam(defaultValue = "questionContent", name = "sort") String sort,
             @RequestParam(defaultValue = "asc", name = "order") String order
     ) throws CustomException {
         // ! Cần thêm Exception nếu như có 1 trường enum bằng null.
@@ -71,7 +71,8 @@ public class AQuestionController {
 
     @PostMapping("")
     ResponseEntity<?> createQuestion(@RequestBody QuestionRequest questionRequest) {
-        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Thêm mới thành công" ) );
+        Question question = questionService.save(questionRequest);
+        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Create question successfully" ) );
     }
 
     @PatchMapping("/{questionId}")
@@ -79,14 +80,14 @@ public class AQuestionController {
             @PathVariable("questionId") Long questionId,
             @RequestBody @Valid QuestionRequest questionRequest) {
         Question question = questionService.patchUpdateQuestion ( questionId, questionRequest );
-        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Sửa câu hỏi thành công" ) );
+        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Update question successfully" ) );
     }
 
     @DeleteMapping("/delete/{questionId}")
     ResponseEntity<?> deleteQuestion(@PathVariable("questionId") String deleteQuestionId) {
         Long questionId = Long.parseLong ( deleteQuestionId );
         questionService.questionDelete ( questionId );
-        return ResponseEntity.status ( 200 ).body ( new ResponseAPI ( true, "Đã xóa thành công" ) );
+        return ResponseEntity.status ( 200 ).body ( new ResponseAPI ( true, "delete successfully" ) );
     }
 
     @GetMapping("/search")

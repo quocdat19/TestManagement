@@ -24,6 +24,7 @@ import java.util.Optional;
 @RequestMapping("/v1/admin/exams")
 public class AExamController {
     private final ExamService examService;
+
     @GetMapping
     public ResponseEntity<?> getAllExamsToPages(
             @RequestParam(defaultValue = "5", name = "limit") int limit,
@@ -51,7 +52,8 @@ public class AExamController {
 
     @PostMapping("")
     ResponseEntity<?> createExam(@RequestBody ExamRequest examRequest) {
-        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Thêm mới bài thi thành công" ) );
+        Exam exam = examService.save ( examRequest );
+        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Create exam successfully" ) );
     }
 
     @PatchMapping("/{examId}")
@@ -61,7 +63,7 @@ public class AExamController {
         try {
             Long id = Long.parseLong ( examId );
             Exam exam = examService.patchUpdateExam ( id, examRequest );
-            return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Sửa bài thi thành công" ) );
+            return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Update exam successfully" ) );
         } catch (NumberFormatException e) {
             throw new CustomException ( "Incorrect id number format" );
         }
@@ -71,7 +73,24 @@ public class AExamController {
     ResponseEntity<?> deleteExam(@PathVariable("examId") String deleteExamId) {
         Long examId = Long.parseLong ( deleteExamId );
         examService.examDelete ( examId );
-        return ResponseEntity.status ( 200 ).body ( new ResponseAPI ( true, "Đã xóa thành công" ) );
+        return ResponseEntity.status ( 200 ).body ( new ResponseAPI ( true, "Delete successfully" ) );
+    }
+
+    @DeleteMapping("{examId}")
+    public ResponseEntity<?> softDeleteExamById(@PathVariable("examId") String examId) throws CustomException {
+        try {
+            Long id = Long.parseLong ( examId );
+            examService.softDeleteById ( id );
+            return new ResponseEntity<> (
+                    new ResponseWrapper<> (
+                            EHttpStatus.SUCCESS,
+                            HttpStatus.OK.value (),
+                            HttpStatus.OK.name (),
+                            "Delete exam successfully."
+                    ), HttpStatus.OK );
+        } catch (NumberFormatException e) {
+            throw new CustomException ( "Incorrect id number format" );
+        }
     }
 
     @GetMapping("/search")

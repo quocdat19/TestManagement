@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ra.exception.CustomException;
 import ra.model.dto.request.ExamRequest;
+import ra.model.dto.response.ExamResponse;
 import ra.model.entity.Enums.EActiveStatus;
 import ra.model.entity.Exam;
 import ra.model.entity.Subject;
@@ -32,6 +33,11 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public Exam save(Exam exam) {
         return examRepository.save ( exam );
+    }
+
+    @Override
+    public Exam save(ExamRequest examRequest) {
+        return examRepository.save ( entityAMap ( examRequest ) );
     }
 
     @Override
@@ -69,11 +75,6 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public void hardDeleteById(Long examId) {
-        examRepository.deleteById ( examId );
-    }
-
-    @Override
     public void softDeleteById(Long examId) throws CustomException {
         Optional<Exam> deleteExam = getExamById ( examId );
         if (deleteExam.isEmpty ())
@@ -84,17 +85,21 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public Page<Exam> getAllExamsToListWithActiveStatus(Pageable pageable) {
-        return examRepository.getAllByStatus ( EActiveStatus.ACTIVE, pageable );
-    }
-
-    @Override
-    public Optional<Exam> getExamByIdWithActiveStatus(Long examId) {
-        return examRepository.findByIdAndStatus ( examId, EActiveStatus.ACTIVE );
-    }
-
-    @Override
     public Page<Exam> getAllBySubjectId(Long subjectId, Pageable pageable) {
         return examRepository.getAllBySubjectId ( subjectId, pageable );
+    }
+
+    @Override
+    public Exam entityAMap(ExamRequest examRequest) {
+        EActiveStatus activeStatus = switch (examRequest.getStatus ().toUpperCase ()) {
+            case "INACTIVE" -> EActiveStatus.INACTIVE;
+            case "ACTIVE" -> EActiveStatus.ACTIVE;
+            default -> null;
+        };
+        return Exam.builder ()
+                .examName ( examRequest.getExamName () )
+                .status ( activeStatus )
+                .subject ( subjectService.getSubjectById ( examRequest.getSubjectId () ).orElse ( null ) )
+                .build ();
     }
 }

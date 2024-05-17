@@ -25,7 +25,11 @@ public class ATestController {
     private final TestService testService;
 
     @GetMapping
-    public ResponseEntity<?> getAllATestsToPages(@RequestParam(defaultValue = "5", name = "limit") int limit, @RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(defaultValue = "testName", name = "sort") String sort, @RequestParam(defaultValue = "asc", name = "sortBy") String sortBy) throws CustomException {
+    public ResponseEntity<?> getAllATestsToPages(
+            @RequestParam(defaultValue = "5", name = "limit") int limit,
+            @RequestParam(defaultValue = "0", name = "page") int page,
+            @RequestParam(defaultValue = "testName", name = "sort") String sort,
+            @RequestParam(defaultValue = "asc", name = "sortBy") String sortBy) throws CustomException {
         try {
             Pageable pageable;
             if (sortBy.equals ( "asc" )) pageable = PageRequest.of ( page, limit, Sort.by ( sort ).ascending () );
@@ -40,29 +44,53 @@ public class ATestController {
 
     @PostMapping("")
     ResponseEntity<?> createTest(@RequestBody TestRequest testRequest) {
-        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Thêm mới thành công" ) );
+        Test test = testService.save ( testRequest );
+        return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Create test successfully" ) );
     }
+
     @PatchMapping("/{testId}")
     public ResponseEntity<?> patchUpdateTest(
             @PathVariable("testId") String testId,
             @RequestBody @Valid TestRequest testRequest) throws CustomException {
         try {
-            Long id = Long.parseLong(testId);
-            Test testUpdate = testService.patchUpdateATest(id, testRequest);
-            return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Sửa đề thi thành công" ) );
+            Long id = Long.parseLong ( testId );
+            Test testUpdate = testService.patchUpdateATest ( id, testRequest );
+            return ResponseEntity.status ( 201 ).body ( new ResponseAPI ( true, "Update Test Successfully" ) );
         } catch (NumberFormatException e) {
-            throw new CustomException("Incorrect id number format");
+            throw new CustomException ( "Incorrect id number format" );
         }
     }
+
     @DeleteMapping("/delete/{testId}")
     ResponseEntity<?> deleteTest(@PathVariable("testId") String deleteTestId) throws CustomException {
         Long testId = Long.parseLong ( deleteTestId );
         testService.hardDeleteByTestId ( testId );
-        return ResponseEntity.status ( 200 ).body ( new ResponseAPI ( true, "Đã xóa thành công" ) );
+        return ResponseEntity.status ( 200 ).body ( new ResponseAPI ( true, "Delete successfully" ) );
+    }
+
+    @DeleteMapping("/{testId}")
+    public ResponseEntity<?> softDeleteTestById(@PathVariable("testId") String testId) throws CustomException {
+        try {
+            Long id = Long.parseLong ( testId );
+            testService.softDeleteByTestId ( id );
+            return new ResponseEntity<> (
+                    new ResponseWrapper<> (
+                            EHttpStatus.SUCCESS,
+                            HttpStatus.OK.value (),
+                            HttpStatus.OK.name (),
+                            "Delete test successfully."
+                    ), HttpStatus.OK );
+        } catch (NumberFormatException e) {
+            throw new CustomException ( "Incorrect id number format" );
+        }
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> findByTestName(@RequestParam(name = "testName") String keyword, @RequestParam(defaultValue = "5", name = "limit") int limit, @RequestParam(defaultValue = "0", name = "page") int page, @RequestParam(defaultValue = "testName", name = "sort") String sort, @RequestParam(defaultValue = "asc", name = "sortBy") String sortBy) throws CustomException {
+    public ResponseEntity<?> findByTestName(@RequestParam(name = "testName") String keyword,
+                                            @RequestParam(defaultValue = "5", name = "limit") int limit,
+                                            @RequestParam(defaultValue = "0", name = "page") int page,
+                                            @RequestParam(defaultValue = "testName", name = "sort") String sort,
+                                            @RequestParam(defaultValue = "asc", name = "sortBy") String sortBy) throws CustomException {
         try {
             Pageable pageable;
             if (sortBy.equals ( "asc" )) pageable = PageRequest.of ( page, limit, Sort.by ( sort ).ascending () );

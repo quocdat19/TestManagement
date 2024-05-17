@@ -2,6 +2,7 @@ package ra.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import ra.exception.CustomException;
 import ra.model.dto.request.SubjectRequest;
 import ra.model.entity.Subject;
 
@@ -20,7 +21,9 @@ public interface SubjectService {
 
     Subject patchUpdate(Long subjectId, SubjectRequest subjectRequest);
 
-    void subjectDelete(Long subjectId);
+    void subjectDelete(Long subjectId) throws CustomException;
+
+    void softDeleteById(Long subjectId) throws CustomException;
 
     Page<Subject> findBySubjectNameContainingIgnoreCase(String subjectName, Pageable pageable);
 }

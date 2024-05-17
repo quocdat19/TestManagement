@@ -10,6 +10,7 @@ import ra.model.dto.auth.JwtResponse;
 import ra.model.dto.auth.LoginRequest;
 import ra.model.dto.auth.RegisterRequest;
 import ra.model.dto.request.UserRequest;
+import ra.model.dto.response.UserResponse;
 import ra.model.entity.Role;
 import ra.model.entity.User;
 
@@ -19,9 +20,7 @@ import java.util.Set;
 public interface UserService {
     Optional<User> getUserById(Long userId);
 
-    Optional<User> getUserByUsername(String username);
-
-    User createUser(UserRequest userRequest);
+    Optional<UserResponse> getUserResponseById(Long userId);
 
     JwtResponse handleLogin(LoginRequest loginRequest) throws CustomException;
 
@@ -33,13 +32,15 @@ public interface UserService {
 
     Page<User> getAllToList(Pageable pageable);
 
+    Page<UserResponse> getAllUserResponsesToList(Pageable pageable);
+
     void deleteById(Long userId);
 
     User save(User users);
 
-    Set<Role> getAllRolesByUser(User user);
-
-    Page<User> findByUsernameOrFullNameContainingIgnoreCase(String keyword, Pageable pageable);
+    Page<UserResponse> findByUsernameOrFullNameContainingIgnoreCase(String keyword, Pageable pageable);
 
     InformationAccount entityMap(User user);
+
+    UserResponse entityAMap(User user);
 }

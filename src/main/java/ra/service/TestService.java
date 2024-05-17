@@ -20,7 +20,10 @@ public interface TestService {
 
     Test save(Test test);
 
+    Test save(TestRequest testRequest);
+
     void hardDeleteByTestId(Long testId) throws CustomException;
+    void softDeleteByTestId(Long testId) throws CustomException;
 
     Test patchUpdateATest(Long testId, TestRequest testRequest) throws CustomException;
 
@@ -30,9 +33,5 @@ public interface TestService {
     //* find by TestType
     Page<Test> getAllByTestType(ETestType testType, Pageable pageable);
 
-    //* find by created date
-    Page<Test> getAllByCreatedDate(LocalDate createdDate, Pageable pageable);
-
-    //* find by from date to date
-    Page<Test> getAllFromDateToDate(LocalDate dateStart, LocalDate dateEnd, Pageable pageable);
+    Test entityAMap(TestRequest testRequest);
 }

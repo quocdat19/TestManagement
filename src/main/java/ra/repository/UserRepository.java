@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> getUserByUsername(String username);
 
-    @Query("SELECT u from User u where u.username LIKE CONCAT('%', :keyword, '%') OR u.fullName LIKE CONCAT('%', :keyword, '%')")
+    @Query("SELECT u from User u join u.roles r where r.role <> 'ROLE_ADMIN' and (u.username LIKE CONCAT('%', :keyword, '%') OR u.fullName LIKE CONCAT('%', :keyword, '%'))")
     Page<User> findByUsernameOrFullNameContainingIgnoreCase(String keyword, Pageable pageable);
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.role <> 'ROLE_ADMIN'")

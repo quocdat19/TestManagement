@@ -1,6 +1,8 @@
 package ra.model.dto;
 
 import lombok.*;
+import ra.model.entity.Enums.EActiveStatus;
+
 import java.time.LocalDate;
 
 @NoArgsConstructor
@@ -15,4 +17,5 @@ public class InformationAccount {
     private String avatar;
     private String email;
     private String phone;
+    private EActiveStatus status;
 }

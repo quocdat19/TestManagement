@@ -19,6 +19,7 @@ import ra.model.dto.auth.JwtResponse;
 import ra.model.dto.auth.LoginRequest;
 import ra.model.dto.auth.RegisterRequest;
 import ra.model.dto.request.UserRequest;
+import ra.model.dto.response.UserResponse;
 import ra.model.entity.Enums.EActiveStatus;
 import ra.model.entity.Enums.ERoles;
 import ra.model.entity.Role;
@@ -48,24 +49,19 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    public Page<UserResponse> getAllUserResponsesToList(Pageable pageable) {
+        return getAllToList ( pageable ).map ( this::entityAMap );
+    }
+
+    @Override
     public Optional<User> getUserById(Long userId) {
         return userRepository.findById ( userId );
     }
 
     @Override
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.getUserByUsername ( username );
-    }
-
-    @Override
-    public User createUser(UserRequest userRequest) {
-        User user = new User ();
-        user.setUsername ( userRequest.getUsername () );
-        user.setPassword ( userRequest.getPassword () );
-        user.setEmail ( userRequest.getEmail () );
-        user.setFullName ( userRequest.getFullName () );
-        user.setPhone ( userRequest.getPhone () );
-        return userRepository.save ( user );
+    public Optional<UserResponse> getUserResponseById(Long userId) {
+        Optional<User> optionalUser = getUserById ( userId );
+        return optionalUser.map ( this::entityAMap );
     }
 
     @Override
@@ -157,24 +153,38 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public Set<Role> getAllRolesByUser(User user) {
-        return user.getRoles ();
-    }
-
-    @Override
-    public Page<User> findByUsernameOrFullNameContainingIgnoreCase(String keyword, Pageable pageable) {
-        return userRepository.findByUsernameOrFullNameContainingIgnoreCase ( keyword, pageable );
+    public Page<UserResponse> findByUsernameOrFullNameContainingIgnoreCase(String keyword, Pageable pageable) {
+        return userRepository.findByUsernameOrFullNameContainingIgnoreCase ( keyword, pageable ).map ( this::entityAMap );
     }
 
     @Override
     public InformationAccount entityMap(User user) {
-        return InformationAccount.builder()
-                .userId(user.getId())
-                .fullName(user.getFullName())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .avatar(user.getAvatar())
-                .build();
+        return InformationAccount.builder ()
+                .userId ( user.getId () )
+                .fullName ( user.getFullName () )
+                .username ( user.getUsername () )
+                .email ( user.getEmail () )
+                .phone ( user.getPhone () )
+                .avatar ( user.getAvatar () )
+                .status ( user.getStatus () )
+                .build ();
+    }
+
+    @Override
+    public UserResponse entityAMap(User user) {
+        return UserResponse.builder ()
+                .userId ( user.getId () )
+                .fullName ( user.getFullName () )
+                .username ( user.getUsername () )
+                .avatar ( user.getAvatar () )
+                .email ( user.getEmail () )
+                .phone ( user.getPhone () )
+                .status ( user.getStatus () )
+                .createdDate ( user.getCreatedDate () )
+                .modifyDate ( user.getModifyDate () )
+                .createdBy ( user.getCreateBy () )
+                .modifyBy ( user.getModifyBy () )
+                .roles ( user.getRoles ().stream ().map ( Role::getRole ) )
+                .build ();
     }
 }

@@ -44,7 +44,7 @@ public class AQuestionOptionController {
     public ResponseEntity<?> getAllQuestionAndOptionByTest(
             @RequestParam(defaultValue = "5", name = "limit") int limit,
             @RequestParam(defaultValue = "0", name = "page") int page,
-            @RequestParam(defaultValue = "contentQuestion", name = "sort") String sort,
+            @RequestParam(defaultValue = "questionContent", name = "sort") String sort,
             @RequestParam(defaultValue = "asc", name = "order") String order,
             @PathVariable String testId) throws CustomException {
         Pageable pageable;
@@ -82,7 +82,7 @@ public class AQuestionOptionController {
     public ResponseEntity<?> getAllQuestionAndOptionByCreateDate(
             @RequestParam(defaultValue = "5", name = "limit") int limit,
             @RequestParam(defaultValue = "0", name = "page") int page,
-            @RequestParam(defaultValue = "contentQuestion", name = "sort") String sort,
+            @RequestParam(defaultValue = "questionContent", name = "sort") String sort,
             @RequestParam(defaultValue = "asc", name = "order") String order,
             @RequestBody @Valid DateSearchCreatedDate dateSearchCreatedDate) throws CustomException {
         Pageable pageable;
@@ -114,7 +114,7 @@ public class AQuestionOptionController {
     public ResponseEntity<?> getAllQuestionAndOptionByLevelQuestion(
             @RequestParam(defaultValue = "5", name = "limit") int limit,
             @RequestParam(defaultValue = "0", name = "page") int page,
-            @RequestParam(defaultValue = "contentQuestion", name = "sort") String sort,
+            @RequestParam(defaultValue = "questionContent", name = "sort") String sort,
             @RequestParam(defaultValue = "asc", name = "order") String order,
             @RequestParam(defaultValue = "EASY", name = "levelQuestion") String levelQuestion) throws CustomException {
         Pageable pageable;
@@ -187,12 +187,12 @@ public class AQuestionOptionController {
     @PostMapping("/{questionId}")
     public ResponseEntity<?> patchUpdateQuestionAndOption(
             @PathVariable("questionId") String questionId,
-            @RequestBody @Valid QuestionOptionRequest aQuestionOptionRequest) throws CustomException {
+            @RequestBody @Valid QuestionOptionRequest questionOptionRequest) throws CustomException {
         try {
             Long idQuestion = Long.parseLong ( questionId );
-            Question question = questionService.patchUpdateQuestion ( idQuestion, aQuestionOptionRequest.getQuestionRequest () );
+            Question question = questionService.patchUpdateQuestion ( idQuestion, questionOptionRequest.getQuestionRequest () );
             optionService.deleteByQuestion ( question );
-            List<OptionRequest> aOptionRequests = aQuestionOptionRequest.getOptionRequests ();
+            List<OptionRequest> aOptionRequests = questionOptionRequest.getOptionRequests ();
             for (OptionRequest aOptionRequest : aOptionRequests) {
                 aOptionRequest.setQuestionId ( question.getId () );
                 aOptionRequest.setStatus ( "ACTIVE" );

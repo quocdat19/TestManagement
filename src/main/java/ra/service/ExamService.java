@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ra.exception.CustomException;
 import ra.model.dto.request.ExamRequest;
+import ra.model.dto.response.ExamResponse;
 import ra.model.entity.Exam;
 
 import java.time.LocalDate;
@@ -17,19 +18,16 @@ public interface ExamService {
 
     Exam save(Exam exam);
 
+    Exam save(ExamRequest examRequest);
+
     Exam patchUpdateExam(Long examId, ExamRequest examRequest) throws CustomException;
 
     void examDelete(Long examId);
 
     Page<Exam> findByExamName(String examName, Pageable pageable);
 
-    void hardDeleteById(Long examId);
-
     void softDeleteById(Long examId) throws CustomException;
 
-    Page<Exam> getAllExamsToListWithActiveStatus(Pageable pageable);
-
-    Optional<Exam> getExamByIdWithActiveStatus(Long examId);
-
     Page<Exam> getAllBySubjectId(Long subjectId, Pageable pageable);
+    Exam entityAMap(ExamRequest examRequest);
 }

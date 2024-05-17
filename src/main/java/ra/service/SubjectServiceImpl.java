@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ra.exception.CustomException;
 import ra.model.base.AuditableEntity;
 import ra.model.dto.request.SubjectRequest;
 import ra.model.entity.Enums.EActiveStatus;
@@ -36,13 +37,15 @@ public class SubjectServiceImpl implements SubjectService {
     public Subject save(SubjectRequest subjectRequest) {
         return subjectRepository.save ( entityAMap ( subjectRequest ) );
     }
+
     @Override
     public Subject entityAMap(SubjectRequest subjectRequest) {
-        return Subject.builder()
-                .subjectName(subjectRequest.getSubjectName())
-                .status(EActiveStatus.valueOf(subjectRequest.getStatus()))
-                .build();
+        return Subject.builder ()
+                .subjectName ( subjectRequest.getSubjectName () )
+                .status ( EActiveStatus.valueOf ( subjectRequest.getStatus () ) )
+                .build ();
     }
+
     @Override
     public Subject patchUpdate(Long subjectId, SubjectRequest subjectRequest) {
         Optional<Subject> updateSubject = getSubjectById ( subjectId );
@@ -61,8 +64,21 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public void subjectDelete(Long subjectId) {
+    public void subjectDelete(Long subjectId) throws CustomException {
+        if (!subjectRepository.existsById ( subjectId ))
+            throw new CustomException ( "Subject is not exists to delete." );
         subjectRepository.deleteById ( subjectId );
+    }
+
+    @Override
+    public void softDeleteById(Long subjectId) throws CustomException {
+        // ? Exception cần tìm thấy thì mới có thể xoá mềm.
+        Optional<Subject> deleteSubject = getSubjectById ( subjectId );
+        if (deleteSubject.isEmpty ())
+            throw new CustomException ( "Subject is not exists to delete." );
+        Subject subject = deleteSubject.get ();
+        subject.setStatus ( EActiveStatus.INACTIVE );
+        subjectRepository.save ( subject );
     }
 
     @Override

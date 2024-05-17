@@ -31,6 +31,8 @@ public interface QuestionService {
 
     List<QuestionResponse> getAllByTest(Test test);
 
+    List<Question> getAllQuestionByTest(Test test);
+
     Question saveQuestionAndOption(QuestionOptionRequest questionOptionRequest);
 
     List<QuestionResponse> getAllByCreatedDate(LocalDate date);
@@ -38,9 +40,10 @@ public interface QuestionService {
     List<QuestionResponse> getAllByQuestionLevel(EQuestionLevel questionLevel);
 
     //* Lay ds cau hoi random
-    List<Question> getAllByTestRandom(Test test);
+    List<QuestionResponse> getAllByTestRandom(Test test);
 
     QuestionResponse entityAMap(Question question);
 
     Question entityAMap(QuestionRequest questionRequest);
+
 }
