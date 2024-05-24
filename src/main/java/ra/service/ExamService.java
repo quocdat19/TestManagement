@@ -29,5 +29,8 @@ public interface ExamService {
     void softDeleteById(Long examId) throws CustomException;
 
     Page<Exam> getAllBySubjectId(Long subjectId, Pageable pageable);
+
     Exam entityAMap(ExamRequest examRequest);
+
+    List<Exam> getAllExamBySubjectOfStudent();
 }

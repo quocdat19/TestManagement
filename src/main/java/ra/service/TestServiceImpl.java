@@ -8,6 +8,7 @@ import ra.exception.CustomException;
 import ra.model.dto.request.TestRequest;
 import ra.model.entity.Enums.EActiveStatus;
 import ra.model.entity.Enums.ETestType;
+import ra.model.entity.Exam;
 import ra.model.entity.Test;
 import ra.repository.TestRepository;
 import ra.security.UserDetail.UserLoggedIn;
@@ -134,5 +135,15 @@ public class TestServiceImpl implements TestService {
                 .status ( status )
                 .exam ( examService.getExamById ( testRequest.getExamId () ).orElse ( null ) )
                 .build ();
+    }
+
+    @Override
+    public List<Test> getAllTestByExamOfStudent() {
+        List<Exam> exams = examService.getAllExamBySubjectOfStudent ();
+        List<Test> tests = new ArrayList<> ();
+        for (Exam exam : exams) {
+            tests.addAll ( testRepository.findAllByExam ( exam ));
+        }
+        return tests;
     }
 }

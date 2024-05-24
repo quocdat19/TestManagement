@@ -9,6 +9,7 @@ import ra.model.entity.Exam;
 import ra.model.entity.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface TestRepository extends JpaRepository<Test, Long> {
 
@@ -19,5 +20,5 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     Page<Test> getAllByExamId(Long examId, Pageable pageable);
 
     Page<Test> getAllByTestType(ETestType testType, Pageable pageable);
-
+    List<Test> findAllByExam(Exam exam);
 }

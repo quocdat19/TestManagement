@@ -10,13 +10,17 @@ import ra.model.dto.request.SubjectRequest;
 import ra.model.entity.Enums.EActiveStatus;
 import ra.model.entity.Subject;
 import ra.repository.SubjectRepository;
+import ra.security.UserDetail.UserLoggedIn;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SubjectServiceImpl implements SubjectService {
     private final SubjectRepository subjectRepository;
+    private final UserLoggedIn userLoggedIn;
 
     @Override
     public Page<Subject> getAllSubject(Pageable pageable) {
@@ -84,5 +88,14 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public Page<Subject> findBySubjectNameContainingIgnoreCase(String subjectName, Pageable pageable) {
         return subjectRepository.findBySubjectNameContainingIgnoreCase ( subjectName, pageable );
+    }
+    @Override
+    public List<Subject> getAllSubjectByUserId() {
+        List<Subject> subjects = new ArrayList<> ();
+        List<Long> subjectIds =  subjectRepository.findByUserId ( userLoggedIn.getUserLoggedIn().getId () );
+        subjectIds.forEach ( id -> {
+            subjects.add (  getSubjectById ( id ).orElse ( null ));
+        } );
+        return subjects;
     }
 }

@@ -36,4 +36,5 @@ public interface TestService {
 
     Test entityAMap(TestRequest testRequest);
 
+    List<Test> getAllTestByExamOfStudent();
 }

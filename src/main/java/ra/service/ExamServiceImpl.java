@@ -12,6 +12,8 @@ import ra.model.entity.Exam;
 import ra.model.entity.Subject;
 import ra.repository.ExamRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -101,5 +103,14 @@ public class ExamServiceImpl implements ExamService {
                 .status ( activeStatus )
                 .subject ( subjectService.getSubjectById ( examRequest.getSubjectId () ).orElse ( null ) )
                 .build ();
+    }
+    @Override
+    public List<Exam> getAllExamBySubjectOfStudent() {
+        List<Subject> subjects = subjectService.getAllSubjectByUserId ();
+        List<Exam> exams = new ArrayList<> ();
+        for (Subject subject : subjects ){
+            exams.addAll (  examRepository.findAllBySubject (subject) );
+        }
+        return exams;
     }
 }

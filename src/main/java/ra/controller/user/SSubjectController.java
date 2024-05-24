@@ -17,6 +17,8 @@ import ra.model.entity.Enums.EHttpStatus;
 import ra.model.entity.Subject;
 import ra.service.SubjectService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/student/subject")
@@ -24,28 +26,15 @@ public class SSubjectController {
     private final SubjectService subjectService;
 
     @GetMapping
-    public ResponseEntity<?> getAllSubjectToPages(
-            @RequestParam(defaultValue = "5", name = "limit") int limit,
-            @RequestParam(defaultValue = "0", name = "page") int page,
-            @RequestParam(defaultValue = "subjectName", name = "sort") String sort,
-            @RequestParam(defaultValue = "asc", name = "order") String order
-    ) throws CustomException {
-        try {
-            Pageable pageable;
-            if (order.equals ( "asc" )) pageable = PageRequest.of ( page, limit, Sort.by ( sort ).ascending () );
-            else pageable = PageRequest.of ( page, limit, Sort.by ( sort ).descending () );
-            Page<Subject> subjectResponses = subjectService.getAllSubject ( pageable );
-            if (subjectResponses.getContent ().isEmpty ()) throw new CustomException ( "Classes page is empty." );
-            return new ResponseEntity<> (
-                    new ResponseWrapper<> (
-                            EHttpStatus.SUCCESS,
-                            HttpStatus.OK.value (),
-                            HttpStatus.OK.name (),
-                            subjectResponses.getContent ()
-                    ), HttpStatus.OK );
-        } catch (Exception exception) {
-            throw new CustomException ( "An error occurred while processing the query!" );
-        }
+    public ResponseEntity<?> allSubject() {
+        List<Subject> subjects = subjectService.getAllSubjectByUserId ();
+        return new ResponseEntity<> (
+                new ResponseWrapper<> (
+                        EHttpStatus.SUCCESS,
+                        HttpStatus.OK.value (),
+                        HttpStatus.OK.name (),
+                        subjects
+                ), HttpStatus.OK );
     }
 
     @GetMapping("/search")

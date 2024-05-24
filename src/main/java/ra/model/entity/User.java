@@ -56,4 +56,13 @@ public class User extends AuditableEntity {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Result> results;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "User_Subject",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
+
+    )
+    private Set<Subject> subjects;
 }

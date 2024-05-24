@@ -42,7 +42,7 @@ public class WebSecurityConfig {
                                         String.valueOf ( ERoles.ROLE_ADMIN ),
                                         String.valueOf ( ERoles.ROLE_USER ) )
                                 .requestMatchers ( "/v1/admin/**" ).hasAnyAuthority ( String.valueOf ( ERoles.ROLE_ADMIN ) )
-                                .requestMatchers ( "/v1/user/**" ).hasAnyAuthority ( String.valueOf ( ERoles.ROLE_USER ) )
+                                .requestMatchers ( "/v1/student/**" ).hasAnyAuthority ( String.valueOf ( ERoles.ROLE_USER ) )
                                 .anyRequest ().authenticated ()
                 ).
                 exceptionHandling (

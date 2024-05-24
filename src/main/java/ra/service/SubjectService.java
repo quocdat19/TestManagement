@@ -6,6 +6,7 @@ import ra.exception.CustomException;
 import ra.model.dto.request.SubjectRequest;
 import ra.model.entity.Subject;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SubjectService {
@@ -26,4 +27,5 @@ public interface SubjectService {
     void softDeleteById(Long subjectId) throws CustomException;
 
     Page<Subject> findBySubjectNameContainingIgnoreCase(String subjectName, Pageable pageable);
+    List<Subject> getAllSubjectByUserId();
 }
